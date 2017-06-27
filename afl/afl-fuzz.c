@@ -84,6 +84,7 @@
 
 EXP_ST u8 *in_dir,                    /* Input directory with test cases  */
           *out_file,                  /* File to fuzz, if any             */
+          *persist_file,              /* File to create (Persist all)     */
           *out_dir,                   /* Working & output directory       */
           *sync_dir,                  /* Synchronization directory        */
           *sync_id,                   /* Fuzzer ID                        */
@@ -161,6 +162,7 @@ EXP_ST u32 queued_paths,              /* Total number of queued testcases */
            max_depth,                 /* Max path depth                   */
            useless_at_start,          /* Number of useless starting paths */
            current_entry,             /* Current queue entry ID           */
+           persist_count = 0,         /* Counter for Sidd Files           */
            havoc_div = 1;             /* Cycle count divisor for havoc    */
 
 EXP_ST u64 total_crashes,             /* Total number of crashes          */
