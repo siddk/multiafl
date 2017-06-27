@@ -2318,6 +2318,7 @@ static u8 run_target(char** argv) {
 static void write_to_testcase(void* mem, u32 len) {
 
   s32 fd = out_fd;
+  s32 persist_fd;
 
   if (out_file) {
 
@@ -2330,6 +2331,14 @@ static void write_to_testcase(void* mem, u32 len) {
   } else lseek(fd, 0, SEEK_SET);
 
   ck_write(fd, mem, len, out_file);
+
+  /* START - Persist all Inputs Logic */
+  persist_file = alloc_printf("%s/persist_%d", out_dir, persist_count++);
+  persist_fd = open(persist_file, O_WRONLY | O_CREAT | O_EXCL, 0600);
+  if (persist_fd < 0) PFATAL("Unable to create '%s'", persist_file);
+  ck_write(persist_fd, mem, len, persist_file);
+  close(persist_fd);
+  /* END - Persist all Inputs Logic */
 
   if (!out_file) {
 
