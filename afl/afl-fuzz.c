@@ -2337,7 +2337,7 @@ static void write_to_testcase(void* mem, u32 len) {
 
   /* START - Persist all Inputs Logic */
   persist_file = alloc_printf("%s/persist_%d", out_dir, persist_count++);
-  persist_fd = open(persist_file, O_WRONLY | O_CREAT | O_EXCL, 0600);
+  persist_fd = open(persist_file, O_WRONLY | O_CREAT, 0600);
   if (persist_fd < 0) PFATAL("Unable to create '%s'", persist_file);
   ck_write(persist_fd, mem, len, persist_file);
   close(persist_fd);
