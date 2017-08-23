@@ -3238,7 +3238,7 @@ static void write_stats_file(double bitmap_cvg, double eps) {
              "last_crash     : %llu\n"
              "last_hang      : %llu\n"
              "exec_timeout   : %u\n"
-             "bits_changed   : %u\n"
+             "bits_changed   : %llu\n"
              "afl_banner     : %s\n"
              "afl_version    : " VERSION "\n"
              "command_line   : %s\n",
