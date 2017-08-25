@@ -121,6 +121,7 @@ EXP_ST u8  skip_deterministic,        /* Skip deterministic stages?       */
            bitmap_changed = 1,        /* Time to update bitmap?           */
            qemu_mode,                 /* Running in QEMU mode?            */
            skip_requested,            /* Skip request, via SIGUSR1        */
+           havoc_n_mode = 0,          /* SIDD: Havoc Num of Stacks        */
            run_over10m;               /* Run time over 10 minutes?        */
 
 static s32 out_fd,                    /* Persistent fd for out_file       */
@@ -6000,6 +6001,44 @@ havoc_stage:
   for (stage_cur = 0; stage_cur < stage_max; stage_cur++) {
 
     u32 use_stacking = 1 << (1 + UR(HAVOC_STACK_POW2));
+    // SIDD START
+    if (havoc_n_mode == -2) {
+        use_stacking = 1 << (1 + UR(5));
+    }
+    else if (havoc_n_mode == -1) {
+        use_stacking = 1 << (6 + UR(5));
+    }
+    else if (havoc_n_mode == 1) {
+        use_stacking = 1 << 1;
+    }
+    else if (havoc_n_mode == 2) {
+        use_stacking = 1 << 2;
+    }
+    else if (havoc_n_mode == 3) {
+        use_stacking == 1 << 3;
+    }
+    else if (havoc_n_mode == 4) {
+        use_stacking == 1 << 4;
+    }
+    else if (havoc_n_mode == 5) {
+        use_stacking == 1 << 5;
+    }
+    else if (havoc_n_mode == 6) {
+        use_stacking == 1 << 6;
+    }
+    else if (havoc_n_mode == 7) {
+        use_stacking == 1 << 7;
+    }
+    else if (havoc_n_mode == 8) {
+        use_stacking == 1 << 8;
+    }
+    else if (havoc_n_mode == 9) {
+        use_stacking == 1 << 9;
+    }
+    else if (havoc_n_mode == 10) {
+        use_stacking == 1 << 10;
+    }
+    // SIDD END
 
     stage_cur_val = use_stacking;
  
@@ -7679,9 +7718,15 @@ int main(int argc, char** argv) {
 
   doc_path = access(DOC_PATH, F_OK) ? "docs" : DOC_PATH;
 
-  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QZ:")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QZ:a")) > 0)
 
     switch (opt) {
+      // SIDD START
+      case 'a':
+        if (sscanf(optarg, "%d", &havoc_n_mode) < 1)
+            FATAL("Bad syntax used for -a");
+        break;
+      // SIDD END
 
       case 'i':
 
