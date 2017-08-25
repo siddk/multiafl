@@ -6015,28 +6015,28 @@ havoc_stage:
         use_stacking = 1 << 2;
     }
     else if (havoc_n_mode == 3) {
-        use_stacking == 1 << 3;
+        use_stacking = 1 << 3;
     }
     else if (havoc_n_mode == 4) {
-        use_stacking == 1 << 4;
+        use_stacking = 1 << 4;
     }
     else if (havoc_n_mode == 5) {
-        use_stacking == 1 << 5;
+        use_stacking = 1 << 5;
     }
     else if (havoc_n_mode == 6) {
-        use_stacking == 1 << 6;
+        use_stacking = 1 << 6;
     }
     else if (havoc_n_mode == 7) {
-        use_stacking == 1 << 7;
+        use_stacking = 1 << 7;
     }
     else if (havoc_n_mode == 8) {
-        use_stacking == 1 << 8;
+        use_stacking = 1 << 8;
     }
     else if (havoc_n_mode == 9) {
-        use_stacking == 1 << 9;
+        use_stacking = 1 << 9;
     }
     else if (havoc_n_mode == 10) {
-        use_stacking == 1 << 10;
+        use_stacking = 1 << 10;
     }
     // SIDD END
 
@@ -7723,7 +7723,6 @@ int main(int argc, char** argv) {
     switch (opt) {
       // SIDD START
       SAYF("Entering case 'a'!\n");
-      fprintf(optarg);
       case 'a':
         if (sscanf(optarg, "%u", &havoc_n_mode) < 1)
             FATAL("Bad syntax used for -a");
