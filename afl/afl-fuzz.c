@@ -7722,6 +7722,8 @@ int main(int argc, char** argv) {
 
     switch (opt) {
       // SIDD START
+      SAYF("Entering case 'a'!\n");
+      fprintf("Optarg: %s\n", optarg);
       case 'a':
         if (sscanf(optarg, "%d", &havoc_n_mode) < 1)
             FATAL("Bad syntax used for -a");
