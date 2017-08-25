@@ -121,8 +121,9 @@ EXP_ST u8  skip_deterministic,        /* Skip deterministic stages?       */
            bitmap_changed = 1,        /* Time to update bitmap?           */
            qemu_mode,                 /* Running in QEMU mode?            */
            skip_requested,            /* Skip request, via SIGUSR1        */
-           havoc_n_mode = 0,          /* SIDD: Havoc Num of Stacks        */
            run_over10m;               /* Run time over 10 minutes?        */
+
+int havoc_n_mode = 0;                 /* SIDD: Havoc Num of Stacks        */
 
 static s32 out_fd,                    /* Persistent fd for out_file       */
            dev_urandom_fd = -1,       /* Persistent fd for /dev/urandom   */
@@ -7724,7 +7725,7 @@ int main(int argc, char** argv) {
       // SIDD START
       SAYF("Entering case 'a'!\n");
       case 'a':
-        if (sscanf(optarg, "%u", &havoc_n_mode) < 1)
+        if (sscanf(optarg, "%d", &havoc_n_mode) < 1)
             FATAL("Bad syntax used for -a");
       break;
       // SIDD END
