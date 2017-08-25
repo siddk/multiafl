@@ -7719,7 +7719,7 @@ int main(int argc, char** argv) {
 
   doc_path = access(DOC_PATH, F_OK) ? "docs" : DOC_PATH;
 
-  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QZ:a")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:a:f:m:t:T:dnCB:S:M:x:QZ")) > 0)
 
     switch (opt) {
       // SIDD START
