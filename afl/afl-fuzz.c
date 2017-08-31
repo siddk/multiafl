@@ -6058,7 +6058,7 @@ havoc_stage:
           // SIDD END
           break;
 
-        case 0 ... 50:
+        case 54 ... 56:
 
           /* Set byte to interesting value. */
 
@@ -6069,7 +6069,7 @@ havoc_stage:
           // SIDD END
           break;
 
-        case 54 ... 56:
+        case 0 ... 50:
 
           /* Set word to interesting value, randomly choosing endian. */
 
