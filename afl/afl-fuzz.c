@@ -6093,7 +6093,7 @@ havoc_stage:
 
           break;
 
-        case 0 ... 50:
+        case 60 ... 62:
 
           /* Set dword to interesting value, randomly choosing endian. */
 
@@ -6117,7 +6117,7 @@ havoc_stage:
 
           break;
 
-        case 60 ... 62:
+        case 0 ... 50:
 
           /* Randomly subtract from byte. */
 
