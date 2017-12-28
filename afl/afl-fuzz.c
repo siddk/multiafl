@@ -189,6 +189,10 @@ EXP_ST u64 total_crashes,             /* Total number of crashes          */
 EXP_ST u64 total_bits_changed = 0;    /* Total number of bits changed     */
                                       /* SIDD END                         */
 
+static u8 *havoc_prob_dist;           /* SIDD: String Pointer for P Dist  */
+
+static s32 prob_dist_arr[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; /* SIDD: P DIST */
+
 static u32 subseq_hangs;              /* Number of hangs in a row         */
 
 static u8 *stage_name = "init",       /* Name of the current fuzz stage   */
@@ -393,6 +397,22 @@ static inline u32 UR(u32 limit) {
 
   return random() % limit;
 
+}
+
+/* Sample from Distribution! */
+static inline u32 SAMPLE_FROM_DIST() {
+    u32 r = UR(1000);
+    u32 count = 0;
+    u32 i;
+
+    for (i = 0; i < 16; i++) {
+        count += prob_dist_arr[i];
+        if (count >= r) {
+            return i;
+        }
+    }
+
+    return i;
 }
 
 
@@ -6045,9 +6065,9 @@ havoc_stage:
  
     for (i = 0; i < use_stacking; i++) {
 
-      switch (UR(92 + ((extras_cnt + a_extras_cnt) ? 2 : 0))) {
+      switch (SAMPLE_FROM_DIST()) {
 
-        case 51 ... 53:
+        case 0:
 
           /* Flip a single bit somewhere. Spooky! */
 
@@ -6058,7 +6078,7 @@ havoc_stage:
           // SIDD END
           break;
 
-        case 54 ... 56:
+        case 1:
 
           /* Set byte to interesting value. */
 
@@ -6069,7 +6089,7 @@ havoc_stage:
           // SIDD END
           break;
 
-        case 57 ... 59:
+        case 2:
 
           /* Set word to interesting value, randomly choosing endian. */
 
@@ -6093,7 +6113,7 @@ havoc_stage:
 
           break;
 
-        case 60 ... 62:
+        case 3:
 
           /* Set dword to interesting value, randomly choosing endian. */
 
@@ -6117,7 +6137,7 @@ havoc_stage:
 
           break;
 
-        case 63 ... 65:
+        case 4:
 
           /* Randomly subtract from byte. */
 
@@ -6129,7 +6149,7 @@ havoc_stage:
 
           break;
 
-        case 0 ... 50:
+        case 5:
 
           /* Randomly add to byte. */
 
@@ -6141,7 +6161,7 @@ havoc_stage:
 
           break;
 
-        case 66 ... 68:
+        case 6:
 
           /* Randomly subtract from word, random endian. */
 
@@ -6169,7 +6189,7 @@ havoc_stage:
 
           break;
 
-        case 69 ... 71:
+        case 7:
 
           /* Randomly add to word, random endian. */
 
@@ -6197,7 +6217,7 @@ havoc_stage:
 
           break;
 
-        case 72 ... 74:
+        case 8:
 
           /* Randomly subtract from dword, random endian. */
 
@@ -6225,7 +6245,7 @@ havoc_stage:
 
           break;
 
-        case 75 ... 77:
+        case 9:
 
           /* Randomly add to dword, random endian. */
 
@@ -6253,7 +6273,7 @@ havoc_stage:
 
           break;
 
-        case 78 ... 80:
+        case 10:
 
           /* Just set a random byte to a random value. Because,
              why not. We use XOR with 1-255 to eliminate the
@@ -6267,7 +6287,7 @@ havoc_stage:
 
           break;
 
-        case 81 ... 86: {
+        case 11: {
 
             /* Delete bytes. We're making this a bit more likely
                than insertion (the next option) in hopes of keeping
@@ -6296,7 +6316,7 @@ havoc_stage:
 
           }
 
-        case 87 ... 89:
+        case 12:
 
           if (temp_len + HAVOC_BLK_LARGE < MAX_FILE) {
 
@@ -6339,7 +6359,7 @@ havoc_stage:
 
           break;
 
-        case 90 ... 92: {
+        case 13: {
 
             /* Overwrite bytes with a randomly selected chunk (75%) or fixed
                bytes (25%). */
@@ -6371,7 +6391,7 @@ havoc_stage:
         /* Values 15 and 16 can be selected only if there are any extras
            present in the dictionaries. */
 
-        case 93: {
+        case 14: {
 
             /* Overwrite bytes with an extra. */
 
@@ -6416,7 +6436,7 @@ havoc_stage:
 
           }
 
-        case 94: {
+        case 15: {
 
             u32 use_extra, extra_len, insert_at = UR(temp_len);
             u8* new_buf;
@@ -7719,7 +7739,7 @@ int main(int argc, char** argv) {
 
   doc_path = access(DOC_PATH, F_OK) ? "docs" : DOC_PATH;
 
-  while ((opt = getopt(argc, argv, "+i:o:a:f:m:t:T:dnCB:S:M:x:QZ")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:a:P:f:m:t:T:dnCB:S:M:x:QZ")) > 0)
 
     switch (opt) {
       // SIDD START
@@ -7727,6 +7747,40 @@ int main(int argc, char** argv) {
       case 'a':
         if (sscanf(optarg, "%d", &havoc_n_mode) < 1)
             FATAL("Bad syntax used for -a");
+      break;
+      // SIDD END
+
+      // SIDD START
+      case 'P':
+        SAYF("Entering multi-afl case 'P'!\n");
+        havoc_prob_dist = optarg;
+
+        // Parse Havoc Prob Dist into prob_dist_arr
+        p_vals = strtok(havoc_prob_dist, "|");
+        u8 counter = 0;
+        while (p_vals != NULL) {
+            prob_dist_arr[counter] = atoi(p_vals);
+            p_vals = strtok(NULL, "|");
+            counter += 1;
+        }
+
+        // Error Handling
+        if (counter < 16) {
+            SAYF("Not enough values to unpack in prob dist!\n");
+            return;
+        }
+
+        // Assert Sums to 1000
+        u8 sidd_sum = 0;
+        while (counter > -1) {
+            counter -= 1;
+            sidd_sum += prob_dist_arr[counter];
+        }
+        if (sidd_sum != 1000) {
+            SAYF("Distribution does not sum to 1(000)!\n");
+            return;
+        }
+
       break;
       // SIDD END
 
