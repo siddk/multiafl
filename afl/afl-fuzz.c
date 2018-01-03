@@ -7757,11 +7757,11 @@ int main(int argc, char** argv) {
 
         // Parse Havoc Prob Dist into prob_dist_arr
         char *p_vals;
-        p_vals = strtok(havoc_prob_dist, "|");
+        p_vals = strtok(havoc_prob_dist, "J");
         u8 counter = 0;
         while (p_vals != NULL) {
             prob_dist_arr[counter] = atoi(p_vals);
-            p_vals = strtok(NULL, "|");
+            p_vals = strtok(NULL, "J");
             counter += 1;
         }
 
